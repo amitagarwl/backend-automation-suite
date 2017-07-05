@@ -1,0 +1,6 @@
+serviceEndpoint: http://localhost:8080/dummyService/health
+masterDbConfig:
+  driverClass: com.mysql.jdbc.Drvier
+  url: jdbc:mysql://localhost:3306/Customer_sales
+  username: dummyuser
+  password: dummypassword

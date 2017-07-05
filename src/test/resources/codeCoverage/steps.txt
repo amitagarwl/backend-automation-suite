@@ -1,0 +1,63 @@
+Steps for Offline Instrumentation of Services:
+
+1. Add the following lines in the pom.xml of the service we are trying to Instrument
+
+    <jacoco.skip.instrument>false</jacoco.skip.instrument>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.7.6.201602180812</version>
+                <configuration>
+                    <excludes>
+                        <exclude>com/github/amitagarwl/service/config/Config.class</exclude>    // excludes all the config class in code coverage report
+                    </excludes>
+                <executions>
+                    <execution>
+                        <id>jacoco-instrument</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>instrument</goal>
+                        </goals>
+                        <configuration>
+                            <skip>${jacoco.skip.instrument}</skip>  // You do not want to push the instrumented jar to production, hence the property
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+2. Copy build.xml, jacocoagent.jar, jacocoant.jar, org.jacoco.ant-0.76.201602180812.jar  from this project to the main directory of your Service.
+3. Execute the following command "mvn clean package -Djacoco.skip.instrument=false" to get the instrumented code inside the target folder of your service.
+4. Execute the following command to start the Service jar with the mentioned parameters.
+
+     java -Djacoco-agent.output=file -Djacoco-agent.destfile=/<Path to project Directory>/jacoco.exec -cp jacocoagent.jar:target/< Application.jar> < Main class Package > src/main/resources/application.properties
+
+     Ex: java -Djacoco-agent.output=file -Djacoco-agent.destfile=/Users/amit/project/DummyProject/jacoco.exec -cp jacocoagent.jar:target/DummyApplication-0.0.1-SNAPSHOT.jar com.github.amitagarwl.MainApplication src/main/resources/application.properties
+
+5. A new file called jacoco.exec will be created  in the directory /Users/amit/project/DummyProject/ with file size as 0.
+6. Run the automation suite against your service.
+7. Kill your application process and, you should see that size of jacoco.exec > 0
+8. Execute the following command "mvn clean compile"
+9. Install ant if it is not installed on your computer : "brew install ant"
+10. Execute the command "ant"
+11. You can access the code coverage report in the Service direcory on the path target/site/jacoco/index.html.
+
+Important Links:
+
+1. https://stackoverflow.com/questions/27799419/maven-jacoco-configuration-exclude-classes-packages-from-report-not-working
+2. http://automationrhapsody.com/code-coverage-with-jacoco-offline-instrumentation-with-maven/
+3. http://www.eclemma.org/jacoco/trunk/doc/agent.html
+4. http://www.jacoco.org/jacoco/trunk/doc/implementation.html
+5. http://www.javaworld.com/article/2074515/core-java/unit-test-code-coverage-with-maven-and-jacoco.html
+6. http://www.eclemma.org/jacoco/trunk/doc/counters.html
+7. https://www.codeproject.com/Articles/832744/Getting-Started-with-Code-Coverage-by-Jacoco
+
+To Download other versions of Jar
+
+1. http://mvnrepository.com/artifact/org.jacoco/org.jacoco.agent
+2. http://mvnrepository.com/artifact/org.jacoco/org.jacoco.ant
+3. http://www.eclemma.org/jacoco/
